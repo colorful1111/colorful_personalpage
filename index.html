@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>colorful · 个人主页</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream: #FAF6EF; --sand: #EDE4D3; --brown: #A0784A;
+      --dark: #3D2B1A; --muted: #8C7360; --accent: #C4855A; --light: #F5EEE2;
+      --green: #3B6D11; --green-bg: #EAF3DE; --green-border: #97C459;
+      --red: #A32D2D; --red-bg: #FCEBEB; --red-border: #F09595;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #F0E8D8; min-height: 100vh;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 2.5rem 1rem 4rem; font-family: 'DM Sans', sans-serif;
+    }
+    .page {
+      background: var(--cream); border-radius: 20px; border: 1px solid var(--sand);
+      overflow: hidden; width: 100%; max-width: 680px;
+      box-shadow: 0 4px 32px rgba(61,43,26,0.08);
+    }
+    .hero { background: var(--sand); padding: 3rem 2.5rem 2.5rem; border-bottom: 1px solid #D9CDB8; }
+    .hero-tag { font-size: 11px; letter-spacing: 0.13em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem; }
+    .hero-name { font-family: 'Lora', serif; font-size: 2.6rem; font-weight: 600; color: var(--dark); line-height: 1.15; }
+    .hero-sub { display: flex; gap: 14px; align-items: center; margin-top: 0.55rem; flex-wrap: wrap; }
+    .hero-mbti { font-family: 'Lora', serif; font-style: italic; font-size: 1rem; color: var(--accent); }
+    .hero-city { font-size: 0.85rem; color: var(--muted); }
+    .section { padding: 2rem 2.5rem; border-bottom: 1px solid var(--sand); }
+    .section-label {
+      font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted);
+      margin-bottom: 1.2rem; display: flex; align-items: center; gap: 8px;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--sand); }
+    .about-text { font-size: 0.97rem; line-height: 1.9; color: var(--dark); font-weight: 300; }
+    .about-text em { font-family: 'Lora', serif; font-style: italic; color: var(--accent); }
+    .timeline { display: flex; flex-direction: column; }
+    .tl-item { display: flex; gap: 16px; }
+    .tl-left { display: flex; flex-direction: column; align-items: center; width: 20px; flex-shrink: 0; }
+    .tl-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); border: 2px solid var(--cream); flex-shrink: 0; margin-top: 5px; }
+    .tl-line { flex: 1; width: 1px; background: var(--sand); margin: 3px 0; }
+    .tl-right { padding-bottom: 1.5rem; flex: 1; }
+    .tl-item:last-child .tl-right { padding-bottom: 0; }
+    .tl-school { font-weight: 500; font-size: 0.92rem; color: var(--dark); }
+    .tl-stage { font-size: 0.8rem; color: var(--muted); margin-top: 3px; }
+    .hobby-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .hobby-btn {
+      padding: 0.95rem 1rem; border-radius: 10px; border: 1px solid #D3C6AF;
+      background: var(--light); cursor: pointer; text-align: left;
+      transition: background 0.18s, border-color 0.18s, transform 0.15s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .hobby-btn:hover { background: #EDD5C2; border-color: var(--accent); transform: translateY(-2px); }
+    .hobby-btn .hb-icon { font-size: 1.35rem; display: block; margin-bottom: 5px; }
+    .hobby-btn .hb-name { font-size: 0.9rem; font-weight: 500; color: var(--dark); display: block; }
+    .hobby-btn .hb-hint { font-size: 0.75rem; color: var(--muted); margin-top: 3px; display: block; }
+    .quiz-entry {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 1.3rem; border-radius: 12px; border: 1px solid #D3C6AF;
+      background: var(--light); cursor: pointer; transition: all 0.18s;
+      font-family: 'DM Sans', sans-serif; width: 100%; text-align: left;
+    }
+    .quiz-entry:hover { background: #EDD5C2; border-color: var(--accent); transform: translateY(-1px); }
+    .quiz-entry-left { display: flex; align-items: center; gap: 12px; }
+    .quiz-entry-icon { font-size: 1.4rem; }
+    .quiz-entry-title { font-size: 0.95rem; font-weight: 500; color: var(--dark); display: block; }
+    .quiz-entry-sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; display: block; }
+    .quiz-entry-arrow { font-size: 1.1rem; color: var(--accent); }
+    .contact-list { display: flex; flex-direction: column; gap: 10px; }
+    .contact-row { display: flex; align-items: center; gap: 12px; }
+    .contact-icon {
+      width: 34px; height: 34px; border-radius: 8px; background: var(--sand);
+      border: 1px solid #D3C6AF; display: flex; align-items: center;
+      justify-content: center; font-size: 12px; flex-shrink: 0; font-weight: 500; color: var(--dark);
+    }
+    .contact-label { font-size: 11px; color: var(--muted); display: block; }
+    .contact-value { font-size: 0.88rem; color: var(--dark); }
+    .footer { padding: 1.2rem 2.5rem; background: var(--sand); display: flex; justify-content: space-between; align-items: center; }
+    .footer-sig { font-family: 'Lora', serif; font-style: italic; font-size: 0.82rem; color: var(--muted); }
+    .footer-year { font-size: 0.78rem; color: var(--muted); }
+    .detail-panel { display: none; padding: 2rem 2.5rem 2.5rem; animation: slideIn 0.22s ease; }
+    .detail-panel.active { display: block; }
+    .quiz-panel { display: none; animation: slideIn 0.22s ease; }
+    .quiz-panel.active { display: block; }
+    @keyframes slideIn { from { opacity:0; transform: translateX(18px); } to { opacity:1; transform: translateX(0); } }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px;
+      border-radius: 20px; border: 1px solid var(--sand); background: white;
+      font-size: 0.8rem; color: var(--muted); cursor: pointer;
+      font-family: 'DM Sans', sans-serif; margin-bottom: 1.6rem; transition: border-color 0.2s, color 0.2s;
+    }
+    .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .detail-title { font-family: 'Lora', serif; font-size: 1.65rem; font-weight: 600; color: var(--dark); margin-bottom: 0.3rem; }
+    .detail-subtitle { font-family: 'Lora', serif; font-style: italic; font-size: 0.9rem; color: var(--accent); margin-bottom: 1.8rem; }
+    .sub-label { font-size: 10px; letter-spacing: 0.13em; text-transform: uppercase; color: var(--muted); margin: 1.4rem 0 0.7rem; }
+    .artist-block { margin-bottom: 1.5rem; }
+    .artist-name { font-weight: 500; font-size: 1rem; color: var(--dark); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .artist-name::after { content: ''; flex: 1; height: 1px; background: var(--sand); }
+    .song-list { display: flex; flex-wrap: wrap; gap: 7px; }
+    .song-tag { padding: 4px 13px; border-radius: 16px; font-size: 0.8rem; background: #EDD5C2; border: 1px solid var(--accent); color: var(--brown); }
+    .work-card { background: white; border: 1px solid var(--sand); border-radius: 12px; padding: 1.1rem 1.25rem; margin-bottom: 10px; }
+    .work-title { font-weight: 500; font-size: 0.93rem; color: var(--dark); }
+    .work-desc { font-size: 0.83rem; color: var(--muted); margin-top: 5px; line-height: 1.65; font-weight: 300; }
+    .work-tag { display: inline-block; margin-top: 9px; padding: 3px 10px; border-radius: 12px; font-size: 0.73rem; background: #EDD5C2; color: var(--brown); border: 1px solid #D3A87A; }
+    .trick-list { display: flex; flex-direction: column; gap: 8px; }
+    .trick-item { display: flex; align-items: center; gap: 12px; padding: 0.75rem 1rem; background: white; border: 1px solid var(--sand); border-radius: 10px; }
+    .trick-num { font-size: 0.75rem; color: var(--muted); width: 20px; flex-shrink: 0; }
+    .trick-name { font-size: 0.88rem; color: var(--dark); }
+    .book-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .book-item { padding: 0.72rem 0.9rem; background: white; border: 1px solid var(--sand); border-radius: 10px; font-size: 0.83rem; color: var(--dark); line-height: 1.45; }
+    .tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 0.6rem; }
+    .author-tag { padding: 5px 14px; border-radius: 16px; font-size: 0.82rem; background: #EDD5C2; color: var(--brown); border: 1px solid #D3A87A; }
+    .char-tag { padding: 5px 14px; border-radius: 16px; font-size: 0.82rem; background: var(--light); color: var(--dark); border: 1px solid #D3C6AF; }
+    .q-header { background: var(--sand); padding: 1.2rem 2rem; border-bottom: 1px solid #D9CDB8; }
+    .q-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .q-cat { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+    .q-num { font-size: 11px; color: var(--muted); }
+    .progress-bg { height: 4px; background: #D9CDB8; border-radius: 2px; overflow: hidden; }
+    .progress-bar { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s ease; }
+    .q-body { padding: 1.5rem 2rem; }
+    .q-text { font-family: 'Lora', serif; font-size: 1.05rem; color: var(--dark); line-height: 1.6; margin-bottom: 1.2rem; }
+    .options { display: flex; flex-direction: column; gap: 8px; }
+    .opt {
+      padding: 10px 14px; border-radius: 10px; border: 1px solid #D3C6AF;
+      background: var(--light); cursor: pointer; font-size: 0.88rem; color: var(--dark);
+      text-align: left; font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+    }
+    .opt:hover:not(:disabled) { background: #EDD5C2; border-color: var(--accent); }
+    .opt.correct { background: var(--green-bg); border-color: var(--green-border); color: var(--green); }
+    .opt.wrong { background: var(--red-bg); border-color: var(--red-border); color: var(--red); }
+    .opt.reveal { background: var(--green-bg); border-color: var(--green-border); color: var(--green); }
+    .opt:disabled { cursor: default; }
+    .q-feedback { margin-top: 1rem; font-size: 0.85rem; min-height: 20px; }
+    .q-next {
+      margin-top: 1.2rem; width: 100%; padding: 10px; border-radius: 10px;
+      border: 1px solid #D3C6AF; background: var(--sand);
+      font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: var(--dark);
+      cursor: pointer; transition: background 0.15s; display: none;
+    }
+    .q-next:hover { background: #E0D4BE; }
+    .quiz-nick { padding: 2rem; }
+    .nick-intro { font-size: 0.88rem; color: var(--dark); font-weight: 300; line-height: 1.7; margin-bottom: 1.2rem; }
+    .nick-label { font-size: 0.82rem; color: var(--muted); margin-bottom: 8px; }
+    .nick-input {
+      width: 100%; padding: 10px 14px; border: 1px solid #D3C6AF; border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: var(--dark);
+      background: white; outline: none; transition: border-color 0.2s;
+    }
+    .nick-input:focus { border-color: var(--accent); }
+    .nick-hint { font-size: 0.78rem; color: var(--muted); margin-top: 6px; }
+    .btn-start {
+      width: 100%; margin-top: 1.2rem; padding: 11px; border-radius: 10px;
+      border: none; background: var(--accent); color: white;
+      font-family: 'DM Sans', sans-serif; font-size: 0.92rem; font-weight: 500;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .btn-start:hover { opacity: 0.88; }
+    .btn-start:disabled { opacity: 0.4; cursor: not-allowed; }
+    .result-header { background: var(--sand); padding: 2rem; text-align: center; border-bottom: 1px solid #D9CDB8; }
+    .result-score { font-family: 'Lora', serif; font-size: 3.2rem; font-weight: 600; color: var(--dark); }
+    .result-total { font-size: 1rem; color: var(--muted); }
+    .result-level { font-family: 'Lora', serif; font-style: italic; font-size: 1.1rem; color: var(--accent); margin-top: 6px; }
+    .result-body { padding: 1.5rem 2rem; }
+    .result-nick { font-size: 0.9rem; color: var(--dark); margin-bottom: 1rem; }
+    .result-nick span { font-weight: 500; color: var(--accent); }
+    .lb-title { font-size: 10px; letter-spacing: 0.13em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .lb-title::after { content: ''; flex: 1; height: 1px; background: var(--sand); }
+    .lb-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; margin-bottom: 6px; background: var(--light); border: 1px solid var(--sand); }
+    .lb-rank { font-size: 0.78rem; color: var(--muted); width: 20px; flex-shrink: 0; }
+    .lb-name { font-size: 0.88rem; color: var(--dark); font-weight: 500; flex: 1; }
+    .lb-score { font-size: 0.85rem; color: var(--accent); font-weight: 500; }
+    .lb-time { font-size: 0.75rem; color: var(--muted); }
+    .lb-empty { font-size: 0.85rem; color: var(--muted); text-align: center; padding: 1rem 0; }
+    .loading-tip { font-size: 0.82rem; color: var(--muted); text-align: center; padding: 0.8rem 0; }
+    .admin-link { display: block; text-align: center; margin-top: 1rem; font-size: 0.78rem; color: var(--muted); cursor: pointer; text-decoration: underline; }
+    .admin-panel { margin-top: 1rem; padding: 1rem; background: var(--light); border: 1px solid var(--sand); border-radius: 10px; display: none; }
+    .admin-panel.open { display: block; }
+    .admin-clear { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--red-border); background: var(--red-bg); color: var(--red); font-size: 0.8rem; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+    .done-btn { margin-top: 1rem; width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #D3C6AF; background: var(--sand); font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: var(--dark); cursor: pointer; }
+
+    /* ── ASK BOX ── */
+    .ask-entry {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 1.3rem; border-radius: 12px; border: 1px solid #D3C6AF;
+      background: var(--light); cursor: pointer; transition: all 0.18s;
+      font-family: 'DM Sans', sans-serif; width: 100%; text-align: left; margin-top: 10px;
+    }
+    .ask-entry:hover { background: #EDD5C2; border-color: var(--accent); transform: translateY(-1px); }
+    .ask-panel { display: none; animation: slideIn 0.22s ease; }
+    .ask-panel.active { display: block; }
+    .ask-wrap { padding: 2rem 2.5rem 2.5rem; }
+    .ask-intro { font-size: 0.88rem; color: var(--dark); font-weight: 300; line-height: 1.75; margin-bottom: 1.4rem; }
+    .ask-textarea {
+      width: 100%; padding: 10px 14px; border: 1px solid #D3C6AF; border-radius: 10px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--dark);
+      background: white; outline: none; resize: vertical; min-height: 100px;
+      transition: border-color 0.2s; line-height: 1.6;
+    }
+    .ask-textarea:focus { border-color: var(--accent); }
+    .ask-char { font-size: 0.75rem; color: var(--muted); text-align: right; margin-top: 4px; }
+    .ask-submit {
+      width: 100%; margin-top: 1rem; padding: 11px; border-radius: 10px;
+      border: none; background: var(--accent); color: white;
+      font-family: 'DM Sans', sans-serif; font-size: 0.92rem; font-weight: 500;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .ask-submit:hover { opacity: 0.88; }
+    .ask-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+    .token-box {
+      margin-top: 1.2rem; padding: 1.2rem; background: var(--green-bg);
+      border: 1px solid var(--green-border); border-radius: 12px;
+    }
+    .token-title { font-size: 0.88rem; font-weight: 500; color: var(--green); margin-bottom: 6px; }
+    .token-desc { font-size: 0.8rem; color: var(--green); line-height: 1.6; margin-bottom: 10px; }
+    .token-link {
+      display: block; padding: 8px 12px; background: white; border: 1px solid var(--green-border);
+      border-radius: 8px; font-size: 0.78rem; color: var(--dark); word-break: break-all;
+      line-height: 1.5; margin-bottom: 8px;
+    }
+    .token-copy {
+      padding: 6px 16px; border-radius: 8px; border: 1px solid var(--green-border);
+      background: white; color: var(--green); font-size: 0.8rem; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; transition: background 0.15s;
+    }
+    .token-copy:hover { background: var(--green-bg); }
+    /* ANSWER VIEW */
+    .answer-box {
+      padding: 1.2rem; border-radius: 12px; border: 1px solid var(--sand);
+      background: white; margin-bottom: 10px;
+    }
+    .answer-q { font-size: 0.88rem; color: var(--muted); line-height: 1.6; margin-bottom: 8px; }
+    .answer-a { font-size: 0.92rem; color: var(--dark); line-height: 1.7; font-weight: 300; }
+    .answer-a em { font-family: 'Lora', serif; font-style: italic; color: var(--accent); }
+    .answer-pending {
+      font-size: 0.85rem; color: var(--muted); font-style: italic;
+      padding: 0.8rem; text-align: center;
+    }
+    /* ADMIN ASK */
+    .admin-q-card {
+      background: white; border: 1px solid var(--sand); border-radius: 12px;
+      padding: 1rem 1.2rem; margin-bottom: 10px;
+    }
+    .admin-q-text { font-size: 0.88rem; color: var(--dark); line-height: 1.6; margin-bottom: 8px; }
+    .admin-q-meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 8px; }
+    .admin-q-answered { font-size: 0.8rem; color: var(--green); margin-top: 4px; }
+    .admin-ans-input {
+      width: 100%; padding: 8px 12px; border: 1px solid #D3C6AF; border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: var(--dark);
+      background: white; outline: none; resize: vertical; min-height: 70px;
+      transition: border-color 0.2s; margin-bottom: 6px;
+    }
+    .admin-ans-input:focus { border-color: var(--accent); }
+    .admin-ans-btn {
+      padding: 6px 16px; border-radius: 8px; border: none;
+      background: var(--accent); color: white; font-size: 0.8rem;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+    }
+    .admin-del-btn {
+      padding: 6px 12px; border-radius: 8px; border: 1px solid var(--red-border);
+      background: var(--red-bg); color: var(--red); font-size: 0.78rem;
+      cursor: pointer; font-family: 'DM Sans', sans-serif; margin-left: 6px;
+    }
+    @media (max-width: 480px) {
+      .hero { padding: 2rem 1.5rem 2rem; }
+      .section { padding: 1.5rem 1.5rem; }
+      .detail-panel { padding: 1.5rem 1.5rem 2rem; }
+      .footer { padding: 1rem 1.5rem; }
+      .hero-name { font-size: 2rem; }
+      .book-grid { grid-template-columns: 1fr; }
+      .q-body { padding: 1.2rem 1.5rem; }
+      .q-header { padding: 1rem 1.5rem; }
+      .quiz-nick { padding: 1.5rem; }
+      .result-body { padding: 1.2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="page" id="page">
+
+  <!-- ══ MAIN PAGE ══ -->
+  <div id="main-page">
+    <div class="hero">
+      <p class="hero-tag">个人主页 · Personal Page</p>
+      <h1 class="hero-name">colorful</h1>
+      <div class="hero-sub">
+        <span class="hero-mbti">INFP / INFJ</span>
+        <span class="hero-city">📍 上海</span>
+      </div>
+    </div>
+    <div class="section">
+      <p class="section-label">关于我</p>
+      <p class="about-text">
+        你好，我是 <em>colorful</em>，一个对世界保持好奇的人。<br><br>
+        现就读于<em>上海交通大学</em>研究生阶段，在喧嚣的城市里寻找属于自己的安静角落。
+        相信生活里每一处<em>细节都藏着温度</em>，也相信每个人都值得被认真对待。
+      </p>
+    </div>
+    <div class="section">
+      <p class="section-label">教育经历</p>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+          <div class="tl-right"><p class="tl-school">许昌实验中学</p><p class="tl-stage">初中</p></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+          <div class="tl-right"><p class="tl-school">郑州市第一中学</p><p class="tl-stage">高中</p></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+          <div class="tl-right"><p class="tl-school">上海交通大学</p><p class="tl-stage">本科</p></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot"></div></div>
+          <div class="tl-right"><p class="tl-school">上海交通大学</p><p class="tl-stage">研究生（在读）</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <p class="section-label">兴趣爱好 · 点击探索</p>
+      <div class="hobby-grid">
+        <button class="hobby-btn" onclick="showDetail('music')">
+          <span class="hb-icon">🎵</span>
+          <span class="hb-name">音乐</span>
+          <span class="hb-hint">方大同 · 陶喆 · 周杰伦 →</span>
+        </button>
+        <button class="hobby-btn" onclick="showDetail('badminton')">
+          <span class="hb-icon">🏸</span>
+          <span class="hb-name">羽毛球</span>
+          <span class="hb-hint">桃田贤斗 · 石宇奇 →</span>
+        </button>
+        <button class="hobby-btn" onclick="showDetail('magic')">
+          <span class="hb-icon">🃏</span>
+          <span class="hb-name">魔术</span>
+          <span class="hb-hint">刘谦 · Dai Vernon →</span>
+        </button>
+        <button class="hobby-btn" onclick="showDetail('mystery')">
+          <span class="hb-icon">🔍</span>
+          <span class="hb-name">推理</span>
+          <span class="hb-hint">岛田庄司 · 麻耶雄嵩 →</span>
+        </button>
+      </div>
+    </div>
+    <div class="section">
+      <p class="section-label">你有多了解我？</p>
+      <button class="quiz-entry" onclick="showQuiz()" style="margin-bottom:10px;">
+        <div class="quiz-entry-left">
+          <span class="quiz-entry-icon">🎯</span>
+          <div>
+            <span class="quiz-entry-title">关于我，你知道多少？</span>
+            <span class="quiz-entry-sub">20 道题 · 测测你对 colorful 的了解程度</span>
+          </div>
+        </div>
+        <span class="quiz-entry-arrow">→</span>
+      </button>
+      <button class="quiz-entry" onclick="showLb()">
+        <div class="quiz-entry-left">
+          <span class="quiz-entry-icon">🏆</span>
+          <div>
+            <span class="quiz-entry-title">排行榜</span>
+            <span class="quiz-entry-sub">看看谁最了解 colorful</span>
+          </div>
+        </div>
+        <span class="quiz-entry-arrow">→</span>
+      </button>
+    </div>
+    <div class="section">
+      <p class="section-label">悄悄问我</p>
+      <button class="ask-entry" onclick="showAsk()">
+        <div class="quiz-entry-left">
+          <span class="quiz-entry-icon">💌</span>
+          <div>
+            <span class="quiz-entry-title">匿名提问箱</span>
+            <span class="quiz-entry-sub">悄悄问我任何问题，我会回答你</span>
+          </div>
+        </div>
+        <span class="quiz-entry-arrow">→</span>
+      </button>
+    </div>
+    <div class="section" style="border-bottom:none;">
+      <p class="section-label">联系我</p>
+      <div class="contact-list">
+        <div class="contact-row">
+          <div class="contact-icon">✉</div>
+          <div><span class="contact-label">邮箱</span><span class="contact-value">huachongye628@sjtu.edu.cn</span></div>
+        </div>
+        <div class="contact-row">
+          <div class="contact-icon">QQ</div>
+          <div><span class="contact-label">QQ</span><span class="contact-value">2950976720</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <span class="footer-sig">以真实为名，以热爱为业。</span>
+      <span class="footer-year">2026</span>
+    </div>
+  </div>
+
+  <!-- ══ DETAIL: 音乐 ══ -->
+  <div class="detail-panel" id="detail-music">
+    <button class="back-btn" onclick="goBack()">← 返回</button>
+    <p class="detail-title">🎵 音乐</p>
+    <p class="detail-subtitle">那些反复听、百听不厌的声音</p>
+    <div class="artist-block">
+      <p class="artist-name">方大同</p>
+      <div class="song-list"><span class="song-tag">Rosy</span><span class="song-tag">小小虫</span><span class="song-tag">总结</span></div>
+    </div>
+    <div class="artist-block">
+      <p class="artist-name">陶喆</p>
+      <div class="song-list"><span class="song-tag">二十二</span><span class="song-tag">蝴蝶</span><span class="song-tag">Susan 说</span></div>
+    </div>
+    <div class="artist-block">
+      <p class="artist-name">周杰伦</p>
+      <div class="song-list"><span class="song-tag">你听得到</span><span class="song-tag">开不了口</span></div>
+    </div>
+  </div>
+
+  <!-- ══ DETAIL: 羽毛球 ══ -->
+  <div class="detail-panel" id="detail-badminton">
+    <button class="back-btn" onclick="goBack()">← 返回</button>
+    <p class="detail-title">🏸 羽毛球</p>
+    <p class="detail-subtitle">最喜欢的球员</p>
+    <div class="work-card">
+      <p class="work-title">桃田贤斗 Kento Momota</p>
+      <p class="work-desc">日本羽毛球运动员，以精准的控制力和高密度多拍对决著称，曾长期雄踞世界第一。网前细腻、后场稳健，是教科书式的技术型球员。</p>
+      <span class="work-tag">最爱</span>
+    </div>
+    <div class="work-card">
+      <p class="work-title">石宇奇</p>
+      <p class="work-desc">中国男子羽毛球运动员，进攻凌厉、步伐灵活，以大角度斜线杀球和网前搓球见长，是国羽男单的核心力量之一。</p>
+      <span class="work-tag">最爱</span>
+    </div>
+  </div>
+
+  <!-- ══ DETAIL: 魔术 ══ -->
+  <div class="detail-panel" id="detail-magic">
+    <button class="back-btn" onclick="goBack()">← 返回</button>
+    <p class="detail-title">🃏 魔术</p>
+    <p class="detail-subtitle">手指间的秘密</p>
+    <p class="sub-label">最爱的魔术师</p>
+    <div class="work-card">
+      <p class="work-title">刘谦</p>
+      <p class="work-desc">华人近景魔术代表人物，春晚舞台让无数人见识了魔术的魅力。表演风格亲切自然，将不可思议融入日常之中。</p>
+      <span class="work-tag">最爱</span>
+    </div>
+    <div class="work-card">
+      <p class="work-title">Dai Vernon</p>
+      <p class="work-desc">近代纸牌魔术之父，The Professor。他的手法哲学影响了整整一代魔术师——魔术不是障眼法，而是对人心的理解。</p>
+      <span class="work-tag">最爱</span>
+    </div>
+    <p class="sub-label">会的魔术</p>
+    <div class="trick-list">
+      <div class="trick-item"><span class="trick-num">01</span><span class="trick-name">Elmsley Count</span></div>
+      <div class="trick-item"><span class="trick-num">02</span><span class="trick-name">Transposition</span></div>
+      <div class="trick-item"><span class="trick-num">03</span><span class="trick-name">Chicago Opener</span></div>
+      <div class="trick-item"><span class="trick-num">04</span><span class="trick-name">海曼 Pass</span></div>
+    </div>
+  </div>
+
+  <!-- ══ DETAIL: 推理 ══ -->
+  <div class="detail-panel" id="detail-mystery">
+    <button class="back-btn" onclick="goBack()">← 返回</button>
+    <p class="detail-title">🔍 推理</p>
+    <p class="detail-subtitle">每一个谜题背后都藏着世界的另一种可能</p>
+    <p class="sub-label">读过的作品</p>
+    <div class="book-grid">
+      <div class="book-item">占星术杀人魔法</div><div class="book-item">双月城的惨剧</div>
+      <div class="book-item">斜屋犯罪</div><div class="book-item">异邦骑士</div>
+      <div class="book-item">钟表馆事件</div><div class="book-item">独眼少女</div>
+      <div class="book-item">无人生还</div><div class="book-item">圣母</div>
+      <div class="book-item">有翼之暗</div><div class="book-item">九州旅行</div>
+      <div class="book-item">首无 作祟之物</div>
+    </div>
+    <p class="sub-label">最爱的作者</p>
+    <div class="tag-row"><span class="author-tag">岛田庄司</span><span class="author-tag">麻耶雄嵩</span></div>
+    <p class="sub-label">最爱的角色</p>
+    <div class="tag-row"><span class="char-tag">御手洗洁</span><span class="char-tag">麦卡托鲇</span></div>
+  </div>
+
+  <!-- ══ LEADERBOARD PANEL ══ -->
+  <div class="detail-panel" id="lb-panel">
+    <button class="back-btn" onclick="goBack()">← 返回</button>
+    <p class="detail-title">🏆 排行榜</p>
+    <p class="detail-subtitle">看看谁最了解 colorful</p>
+    <div id="lb-standalone"></div>
+  </div>
+
+  <!-- ══ QUIZ PANEL ══ -->
+  <div class="quiz-panel" id="quiz-panel">
+
+    <!-- NICK SCREEN -->
+    <div id="qz-nick">
+      <div class="hero" style="text-align:center;">
+        <p class="hero-tag" style="text-align:center;">小测验 · Quiz</p>
+        <h2 class="hero-name" style="font-size:1.5rem;text-align:center;">关于我，你知道多少？</h2>
+        <p style="font-family:'Lora',serif;font-style:italic;font-size:0.88rem;color:var(--accent);margin-top:6px;">20 道题，测测你对 colorful 的了解程度</p>
+      </div>
+      <div class="quiz-nick">
+        <p class="nick-intro">先起个昵称，答完会出现在排行榜上。每个昵称只能参与一次哦～</p>
+        <p class="nick-label">你的昵称</p>
+        <input class="nick-input" id="nick-input" type="text" placeholder="输入昵称（最多12字）" maxlength="12" />
+        <p class="nick-hint" id="nick-hint">昵称将显示在排行榜上</p>
+        <button class="btn-start" id="btn-start" onclick="startQuiz()" disabled>开始答题</button>
+        <button class="back-btn" style="width:100%;justify-content:center;margin-top:10px;" onclick="goBack()">← 返回主页</button>
+      </div>
+    </div>
+
+    <!-- QUESTION SCREEN -->
+    <div id="qz-question" style="display:none;">
+      <div class="q-header">
+        <div class="q-meta">
+          <span class="q-cat" id="q-cat"></span>
+          <span class="q-num" id="q-num"></span>
+        </div>
+        <div class="progress-bg"><div class="progress-bar" id="prog"></div></div>
+      </div>
+      <div class="q-body">
+        <p class="q-text" id="q-text"></p>
+        <div class="options" id="opts"></div>
+        <p class="q-feedback" id="q-fb"></p>
+        <button class="q-next" id="q-next" onclick="nextQ()"></button>
+      </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="qz-result" style="display:none;">
+      <div class="result-header">
+        <div class="result-score" id="r-score"></div>
+        <div class="result-total">/ 20 题</div>
+        <div class="result-level" id="r-level"></div>
+      </div>
+      <div class="result-body">
+        <p class="result-nick" id="r-nick"></p>
+        <p class="lb-title">排行榜</p>
+        <div id="leaderboard"></div>
+        <span class="admin-link" onclick="toggleAdmin()">管理员入口</span>
+        <div class="admin-panel" id="admin-panel">
+          <div id="admin-login">
+            <p style="font-size:0.85rem;font-weight:500;color:var(--dark);margin-bottom:8px;">请输入管理员密码</p>
+            <div style="display:flex;gap:8px;">
+              <input id="admin-pw" type="password" placeholder="密码" style="flex:1;padding:7px 12px;border:1px solid #D3C6AF;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;color:var(--dark);background:white;outline:none;" />
+              <button onclick="adminLogin()" style="padding:7px 14px;border-radius:8px;border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:0.82rem;cursor:pointer;">确认</button>
+            </div>
+            <p id="admin-err" style="font-size:0.78rem;color:var(--red);margin-top:6px;display:none;">密码错误，请重试</p>
+          </div>
+          <div id="admin-actions" style="display:none;">
+            <p style="font-size:0.82rem;color:var(--muted);margin-bottom:10px;">验证成功 ✓</p>
+            <button class="admin-clear" onclick="clearAll()" style="display:block;width:100%;margin-bottom:8px;">清空全部记录</button>
+            <button class="admin-clear" onclick="showAdminAsk()" style="display:block;width:100%;margin-bottom:8px;background:var(--light);border-color:#D3C6AF;color:var(--dark);">查看提问箱</button>
+            <div style="display:flex;gap:8px;margin-top:4px;">
+              <input id="del-nick" type="text" placeholder="输入要删除的昵称" style="flex:1;padding:7px 12px;border:1px solid #D3C6AF;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--dark);background:white;outline:none;" />
+              <button onclick="deleteOne()" style="padding:7px 14px;border-radius:8px;border:1px solid var(--red-border);background:var(--red-bg);color:var(--red);font-family:'DM Sans',sans-serif;font-size:0.82rem;cursor:pointer;">删除</button>
+            </div>
+          </div>
+        </div>
+        <button class="done-btn" onclick="retryQuiz()">再来一次（换个昵称）</button>
+        <button class="back-btn" style="width:100%;justify-content:center;margin-top:10px;" onclick="goBack()">← 返回主页</button>
+      </div>
+    </div>
+
+  </div>
+  <!-- ══ ASK PANEL ══ -->
+  <div class="ask-panel" id="ask-panel">
+    <div class="ask-wrap">
+      <button class="back-btn" onclick="goBack()">← 返回</button>
+      <p class="detail-title">💌 匿名提问箱</p>
+      <p class="detail-subtitle">悄悄问我任何问题</p>
+      <div id="ask-form-area">
+        <p class="ask-intro">你的问题会匿名发送给我。提交后会生成一个专属链接，<strong>只有你</strong>能用这个链接看到我的回答，请务必保存好。</p>
+        <textarea class="ask-textarea" id="ask-q" placeholder="想问我什么？" maxlength="300" oninput="updateChar()"></textarea>
+        <p class="ask-char"><span id="ask-char-count">0</span> / 300</p>
+        <button class="ask-submit" id="ask-submit-btn" onclick="submitAsk()" disabled>匿名提交</button>
+      </div>
+      <div id="ask-token-area" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- ══ ANSWER VIEW PANEL ══ -->
+  <div class="ask-panel" id="answer-panel">
+    <div class="ask-wrap">
+      <button class="back-btn" onclick="goBack()">← 返回主页</button>
+      <p class="detail-title">💬 我的回答</p>
+      <p class="detail-subtitle">这条回答只有你能看到</p>
+      <div id="answer-content"></div>
+    </div>
+  </div>
+
+  <!-- ══ ADMIN ASK PANEL ══ -->
+  <div class="ask-panel" id="admin-ask-panel">
+    <div class="ask-wrap">
+      <button class="back-btn" onclick="goBack()">← 返回</button>
+      <p class="detail-title">🔐 提问管理</p>
+      <p class="detail-subtitle">查看并回答所有匿名问题</p>
+      <div id="admin-ask-login">
+        <p style="font-size:0.88rem;color:var(--dark);margin-bottom:10px;">请输入管理员密码</p>
+        <div style="display:flex;gap:8px;">
+          <input id="admin-ask-pw" type="password" placeholder="密码" style="flex:1;padding:8px 12px;border:1px solid #D3C6AF;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--dark);background:white;outline:none;" />
+          <button onclick="adminAskLogin()" style="padding:8px 16px;border-radius:8px;border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:0.85rem;cursor:pointer;">确认</button>
+        </div>
+        <p id="admin-ask-err" style="font-size:0.78rem;color:var(--red);margin-top:6px;display:none;">密码错误</p>
+      </div>
+      <div id="admin-ask-list" style="display:none;">
+        <div id="admin-q-cards"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://foapoevhffgwfafyeflo.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvYXBvZXZoZmZnd2ZhZnllZmxvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzMDM3NDUsImV4cCI6MjA5MTg3OTc0NX0.IE7fZ1_xpRCjmfKoVRhHt06GaFONJenqzqKyxQXKwDk';
+  const TABLE = 'quiz_records';
+
+  async function sbFetch(path, opts) {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, Object.assign({
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      }
+    }, opts));
+    if (!res.ok) throw new Error(await res.text());
+    const text = await res.text();
+    return text ? JSON.parse(text) : [];
+  }
+
+  async function checkNickExists(nick) {
+    try {
+      const data = await sbFetch(TABLE + '?nickname=eq.' + encodeURIComponent(nick) + '&select=id');
+      return data.length > 0;
+    } catch(e) { return false; }
+  }
+
+  async function saveRecord(nick, score) {
+    await sbFetch(TABLE, {
+      method: 'POST',
+      body: JSON.stringify({ nickname: nick, score: score, date: new Date().toLocaleDateString('zh-CN') })
+    });
+  }
+
+  async function fetchLeaderboard() {
+    return await sbFetch(TABLE + '?select=nickname,score,date&order=score.desc&limit=10');
+  }
+
+  async function deleteAll() {
+    await sbFetch(TABLE + '?id=gte.0', { method: 'DELETE' });
+  }
+
+  const QUESTION_BANK = [
+    // ── 生活习惯 ──
+    {cat:'生活习惯',q:'我的作息习惯是？',opts:['规律，早睡早起','晚睡晚起，典型夜猫子','完全随机，说不准','偶尔规律，偶尔混乱'],ans:0},
+    {cat:'生活习惯',q:'我的午餐和晚餐，通常怎么解决？',opts:['点外卖','食堂解决','自己做饭','随便凑合'],ans:1},
+    {cat:'生活习惯',q:'我的"放纵餐"是什么？',opts:['火锅','烤肉','麦当劳','奶茶加炸鸡'],ans:2},
+    {cat:'生活习惯',q:'如果早上没按时起床，最可能的原因是？',opts:['前一天熬夜','赖床刷手机','没洗头，不想出门','闹钟没响'],ans:2},
+    {cat:'生活习惯',q:'我一般几点入睡？',opts:['11点前','12点左右','12:30左右','凌晨2点以后'],ans:2},
+    {cat:'生活习惯',q:'我喝咖啡还是茶？',opts:['每天喝咖啡','偶尔喝咖啡','喝茶','咖啡和茶都不喝'],ans:2},
+    {cat:'生活习惯',q:'我平时喝水用什么容器？',opts:['保温杯','矿泉水瓶','直接用一次性纸杯','普通杯子'],ans:3},
+    {cat:'生活习惯',q:'我洗澡习惯早上洗还是晚上洗？',opts:['早上洗，清醒一下','晚上洗，洗完睡觉','早晚都洗','随机，看心情'],ans:1},
+    {cat:'生活习惯',q:'我的房间整洁程度如何？',opts:['一尘不染，洁癖级别','比较整洁','比较杂乱','灾难现场'],ans:2},
+    {cat:'生活习惯',q:'我出门前最容易忘带什么？',opts:['手机','钱包','钥匙','耳机'],ans:2},
+    {cat:'生活习惯',q:'我走路的速度通常是？',opts:['很慢，喜欢溜达','中等，不快不慢','很快，走路带风','根据心情变化'],ans:2},
+    {cat:'生活习惯',q:'我刷手机最多用哪个App？',opts:['微博','抖音','Bilibili','小红书'],ans:2},
+    {cat:'生活习惯',q:'我吃饭的速度是？',opts:['很快，风卷残云','一般，不快不慢','很慢，细嚼慢咽','边吃边刷手机，说不准'],ans:1},
+    {cat:'生活习惯',q:'我买东西时倾向于？',opts:['线上，方便快捷','线下，看得见摸得着','线上线下都有','全靠别人推荐'],ans:1},
+    {cat:'生活习惯',q:'我一般几点起床？',opts:['7点前','7:30左右','8:30左右','9点以后'],ans:2},
+    {cat:'生活习惯',q:'我有午睡的习惯吗？',opts:['有，雷打不动','偶尔午睡','基本没有','想睡但睡不着'],ans:2},
+    {cat:'生活习惯',q:'手机电量到多少会开始焦虑？',opts:['50%以下就开始慌','30%','20%','10%以下才充电'],ans:2},
+    {cat:'生活习惯',q:'我喜欢开灯睡还是关灯睡？',opts:['开灯睡，黑了不安心','关灯睡，黑暗才能睡着','小夜灯将就','无所谓'],ans:1},
+    {cat:'生活习惯',q:'我的运动频率大概是？',opts:['几乎不运动','偶尔运动','一周1-3次','一周4-5次'],ans:3},
+    {cat:'生活习惯',q:'周末我最可能在做什么？',opts:['出去玩，探索城市','宅家追剧刷手机','在工位摸鱼','约朋友聚会'],ans:2},
+    {cat:'生活习惯',q:'我吃东西口味偏向？',opts:['辣，越辣越好','咸鲜','甜','清淡'],ans:2},
+    {cat:'生活习惯',q:'我外出时戴耳机的频率是？',opts:['从不戴','偶尔戴','心情好才戴','只要出门必戴'],ans:3},
+    {cat:'生活习惯',q:'天气好的时候我更愿意？',opts:['出去走走，感受阳光','待在家，天好不代表我要出门','看情况','拉窗帘继续睡'],ans:0},
+    {cat:'生活习惯',q:'我最讨厌做的家务是？',opts:['洗碗','整理衣物','拖地','倒垃圾'],ans:2},
+    {cat:'生活习惯',q:'我一天大概看多少次手机？',opts:['10次以内','20-30次','50次左右','难以计数，停不下来'],ans:3},
+    // ── 兴趣爱好 ──
+    {cat:'兴趣爱好',q:'结束学习后我最可能做什么？',opts:['刷手机','打游戏','自己唱歌','和朋友出去逛'],ans:2},
+    {cat:'兴趣爱好',q:'我最喜欢的音乐风格？',opts:['民谣','说唱 Hip-hop','R&B','流行 Pop'],ans:2},
+    {cat:'兴趣爱好',q:'我每天听音乐大概多少小时？',opts:['不到1小时','1-2小时','2-4小时','4小时以上'],ans:3},
+    {cat:'兴趣爱好',q:'打羽毛球时我更倾向于？',opts:['一个人练球','和陌生人约球','和熟悉的朋友一起打','参加正式比赛'],ans:2},
+    {cat:'兴趣爱好',q:'我一般什么时候看推理小说？',opts:['通勤路上','午休时间','睡前','周末集中看'],ans:2},
+    {cat:'兴趣爱好',q:'我最喜欢的推理作家是？',opts:['阿加莎·克里斯蒂','东野圭吾','岛田庄司','麻耶雄嵩'],ans:2},
+    {cat:'兴趣爱好',q:'我最喜欢的羽毛球运动员是？',opts:['林丹','李宗伟','桃田贤斗','安赛龙'],ans:2},
+    {cat:'兴趣爱好',q:'我最喜欢的华语歌手是？',opts:['周杰伦','陶喆','方大同','林俊杰'],ans:2},
+    {cat:'兴趣爱好',q:'我最拿手的魔术技法是？',opts:['Transposition','Chicago Opener','Elmsley Count','海曼 Pass'],ans:2},
+    {cat:'兴趣爱好',q:'我最喜欢的魔术师是？',opts:['大卫·科波菲尔','Dai Vernon','刘谦','胡迪尼'],ans:2},
+    {cat:'兴趣爱好',q:'方大同哪首歌是我最爱？',opts:['总结','小小虫','Rosy','橙月'],ans:2},
+    {cat:'兴趣爱好',q:'陶喆哪首歌最打动我？',opts:['二十二','Susan 说','蝴蝶','爱很简单'],ans:2},
+    {cat:'兴趣爱好',q:'周杰伦哪首歌最符合我的风格？',opts:['开不了口','七里香','你听得到','稻香'],ans:2},
+    {cat:'兴趣爱好',q:'我喜欢的推理小说类型是？',opts:['社会派（写实风格）','悬疑惊悚','新本格（诡计流）','心理犯罪'],ans:2},
+    {cat:'兴趣爱好',q:'打羽毛球时我更喜欢？',opts:['双打，配合感强','混双','单打，靠自己','都无所谓'],ans:2},
+    {cat:'兴趣爱好',q:'我喜欢在什么状态下听音乐？',opts:['专门静下来听','睡前听','运动时听','随时随地都在听'],ans:3},
+    {cat:'兴趣爱好',q:'我主要玩哪类魔术？',opts:['硬币魔术','绳子魔术','纸牌魔术','心灵魔术'],ans:2},
+    {cat:'兴趣爱好',q:'我读推理小说最看重什么？',opts:['人物塑造','氛围营造','诡计设计','社会批判'],ans:2},
+    {cat:'兴趣爱好',q:'我最喜欢的推理小说侦探是？',opts:['金田一','波洛','麦卡托鲇','御手洗洁'],ans:3},
+    {cat:'兴趣爱好',q:'除了音乐/羽毛球/魔术/推理，我还有什么爱好？',opts:['摄影','桌游/剧本杀','绘画','编程'],ans:1},
+    {cat:'兴趣爱好',q:'我看过的推理小说里，哪本最难忘？',opts:['无人生还','钟表馆事件','独眼少女','占星术杀人魔法'],ans:3},
+    {cat:'兴趣爱好',q:'我会主动向别人表演魔术吗？',opts:['从不，太害羞','只对很熟的朋友','会，有人请我表演','会主动找机会表演'],ans:2},
+    {cat:'兴趣爱好',q:'我听音乐时喜欢跟着哼唱吗？',opts:['不会，只是听','偶尔哼两句','经常跟着唱','全程大声唱'],ans:2},
+    {cat:'兴趣爱好',q:'我平时看书用纸质书还是电子书？',opts:['只看纸质书','以纸质书为主','以电子书为主','只看电子书'],ans:3},
+    {cat:'兴趣爱好',q:'我的羽毛球水平自我评价是？',opts:['职业水准','业余高手','业余水平','刚入门'],ans:2},
+    // ── 个人性格 ──
+    {cat:'个人性格',q:'遇到烦心事，我的第一反应是？',opts:['找朋友倾诉','发朋友圈散心','自己难过，慢慢消化','用运动转移注意力'],ans:2},
+    {cat:'个人性格',q:'以下哪个最能描述我的社交状态？',opts:['自来熟，见谁都能聊','社恐，但面对熟人很外向','真正的i人，能不社交就不社交','外向，享受热闹'],ans:1},
+    {cat:'个人性格',q:'我的MBTI是？',opts:['INTJ','INFP','ENFP','ISTP'],ans:1},
+    {cat:'个人性格',q:'面对截止日期，我通常是？',opts:['deadline前一晚爆发','提前规划，按时完成','完全忘记，临时抱佛脚','边拖延边焦虑'],ans:1},
+    {cat:'个人性格',q:'我遇到选择困难时？',opts:['随便选一个，无所谓','反复对比，久久不决','让别人帮我决定','直接放弃选择'],ans:0},
+    {cat:'个人性格',q:'我更倾向哪种社交方式？',opts:['大群体聚会','小圈子深聊','保持一定距离，留有个人空间','线上社交为主'],ans:2},
+    {cat:'个人性格',q:'别人对我第一印象最可能是？',opts:['开朗外向','非常内向，话不多','神秘高冷','随和平易近人'],ans:1},
+    {cat:'个人性格',q:'我生气时的表现是？',opts:['大声表达不满','哭出来','不想搭理任何人','冷静分析原因'],ans:2},
+    {cat:'个人性格',q:'我对陌生人通常是？',opts:['主动打招呼','友善但被动','保持礼貌距离','尽量避免接触'],ans:1},
+    {cat:'个人性格',q:'我做决定时更依赖？',opts:['数据和逻辑分析','直觉和感受','别人的建议','随缘'],ans:1},
+    {cat:'个人性格',q:'我是一个容易感到孤独的人吗？',opts:['很容易，需要陪伴','偶尔会','不容易，享受独处','从来不会'],ans:2},
+    {cat:'个人性格',q:'我的情绪稳定程度如何？',opts:['大起大落，情绪化','偶尔波动','比较稳定','堪比乐山大佛，极稳'],ans:3},
+    {cat:'个人性格',q:'面对批评，我的反应是？',opts:['立刻反驳','沉默接受，内心受伤','认真反思，看有没有道理','当场哭出来'],ans:2},
+    {cat:'个人性格',q:'我在群体中通常扮演什么角色？',opts:['领导者，带头组织','活跃分子，带动气氛','被动跟随','观察者，在旁边看'],ans:2},
+    {cat:'个人性格',q:'我是否容易被他人影响？',opts:['非常容易，人云亦云','有时候会','不容易，有自己的判断','完全不受影响'],ans:2},
+    {cat:'个人性格',q:'我对新事物的态度是？',opts:['积极拥抱，马上尝试','又想尝试又有些害怕','先观望，看别人反应','抗拒，维持现状'],ans:1},
+    {cat:'个人性格',q:'我更喜欢哪种旅行方式？',opts:['说走就走，随机应变','提前计划好一切','跟团游，省心','根本不喜欢旅行'],ans:1},
+    {cat:'个人性格',q:'我睡前通常在想什么？',opts:['明天的计划和安排','今天的事情复盘','什么也不想，放空自己','各种乱七八糟的事'],ans:2},
+    {cat:'个人性格',q:'我对自己要求严格吗？',opts:['非常严格，近乎苛刻','比较严格','一般','对自己很宽容'],ans:1},
+    {cat:'个人性格',q:'和朋友发生矛盾时我通常是？',opts:['直接说出来，当面解决','冷战，等对方来找我','主动缓和气氛','自己生闷气，不表达'],ans:2},
+    {cat:'个人性格',q:'我是一个记仇的人吗？',opts:['很记仇，念念不忘','偶尔会记','今天的事明天就忘了','完全不记仇'],ans:2},
+    {cat:'个人性格',q:'我对金钱的态度是？',opts:['精打细算，能省则省','够花就行，不过分追求','喜欢消费，享受当下','努力赚钱，越多越好'],ans:1},
+    {cat:'个人性格',q:'我在压力下的表现是？',opts:['焦虑，坐立不安','沉默，不想说话','保持冷静，照常行动','向别人倾诉'],ans:1},
+    {cat:'个人性格',q:'我享受独处吗？',opts:['不享受，独处让我难受','无所谓','享受，独处是充电','非常享受，独处是最佳状态'],ans:3},
+    {cat:'个人性格',q:'我是否经常反思自己？',opts:['每天都在反思','偶尔反思','很少反思','从不反思'],ans:2},
+    // ── 学业工作 ──
+    {cat:'学业工作',q:'我的专业方向是？',opts:['计算机与人工智能','金融与经济','电力系统','生物医学'],ans:2},
+    {cat:'学业工作',q:'对于未来，我的心态是？',opts:['规划详细，目标明确','车到山前必有路，随遇而安','焦虑，不知道方向','躺平，走一步看一步'],ans:1},
+    {cat:'学业工作',q:'我做事的风格是？',opts:['慢工出细活，精益求精','雷厉风行，快速执行','拖延型，截止前爆发','随机应变，见机行事'],ans:1},
+    {cat:'学业工作',q:'我对学业的态度是？',opts:['绩点是一切，拼命卷','认真做好自己的任务','佛系，过得去就行','焦虑但不知道怎么改变'],ans:1},
+    {cat:'学业工作',q:'我现在在哪所学校读研？',opts:['复旦大学','同济大学','上海交通大学','华东师范大学'],ans:2},
+    {cat:'学业工作',q:'我的本科在哪里念的？',opts:['复旦大学','同济大学','上海交通大学','浙江大学'],ans:2},
+    {cat:'学业工作',q:'我高中在哪里就读？',opts:['许昌一中','郑州外国语学校','郑州市第一中学','河南实验中学'],ans:2},
+    {cat:'学业工作',q:'我初中在哪里就读？',opts:['郑州实验中学','许昌实验中学','上海实验中学','许昌一中'],ans:1},
+    {cat:'学业工作',q:'我是哪种类型的学习者？',opts:['临时抱佛脚型','提前计划，稳步推进','随机应变型','一鼓作气型'],ans:1},
+    {cat:'学业工作',q:'我对自己专业的感受是？',opts:['非常热爱，是我的天职','有点挑战，但还能应付','毫无兴趣，纯混文凭','又爱又恨'],ans:1},
+    {cat:'学业工作',q:'我上课时通常坐哪里？',opts:['第一排，积极表现','中间，不显眼','后排，自由自在','坐在工位'],ans:3},
+    {cat:'学业工作',q:'我做笔记的方式是？',opts:['详细手写笔记','电脑打字整理','不做笔记，懒得动笔','录音代替笔记'],ans:2},
+    {cat:'学业工作',q:'遇到不懂的问题，我第一反应是？',opts:['翻书自己研究','问同学或老师','寻求AI帮助','先搁置，之后再说'],ans:2},
+    {cat:'学业工作',q:'我最高效的学习时间段是？',opts:['清晨','上午','下午','随时都可以'],ans:3},
+    {cat:'学业工作',q:'我偏向独自完成任务还是合作？',opts:['喜欢团队合作','两者都行','独立完成，不依赖别人','看任务性质决定'],ans:2},
+    {cat:'学业工作',q:'我对组会/汇报的态度是？',opts:['很喜欢，展示自己的机会','紧张但能应对','无所谓，完成任务就行','很抗拒，能避则避'],ans:2},
+    {cat:'学业工作',q:'我学习时喜欢开音乐吗？',opts:['完全不开，影响专注','偶尔开','喜欢开着','没有音乐难以学习'],ans:3},
+    {cat:'学业工作',q:'我最不擅长的学科类型是？',opts:['数理逻辑类','外语类','语文/文学类','艺术类'],ans:2},
+    {cat:'学业工作',q:'我对科研/学术的兴趣程度是？',opts:['非常感兴趣，热爱钻研','有一定兴趣','只是为了毕业','毫无兴趣'],ans:2},
+    {cat:'学业工作',q:'我毕业后最可能走哪条路？',opts:['出国深造','继续读博','进互联网大厂','进国企，寻求稳定'],ans:3},
+    {cat:'学业工作',q:'遇到难题时，我的策略是？',opts:['随便应付一下交差','先解决掉，才能心安','暂时搁置，换个角度再看','直接求助他人'],ans:1},
+    {cat:'学业工作',q:'我对GPA/绩点的重视程度？',opts:['无所谓，差不多就行','一般重视','比较重视','头等大事，必须高分'],ans:3},
+    {cat:'学业工作',q:'我有明确的人生目标吗？',opts:['有，非常清晰','有大方向，细节模糊','过得开心就好，不需要目标','完全没有，走一步看一步'],ans:2},
+    {cat:'学业工作',q:'我最大的学业压力来源是？',opts:['考试和绩点','同学之间的竞争','做科研、出成果','找工作和未来规划'],ans:2},
+    {cat:'学业工作',q:'我对"内卷"这件事的看法是？',opts:['支持，竞争让人进步','无奈接受，不得不卷','反对，消耗自己没意义','每个人的快乐来源不同，自己过得好就行'],ans:3},
+  ];
+
+  // 每次随机抽20题
+  function sampleQuestions() {
+    var bank = QUESTION_BANK.slice();
+    for(var i = bank.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = bank[i]; bank[i] = bank[j]; bank[j] = tmp;
+    }
+    return bank.slice(0, 20);
+  }
+
+  var QUESTIONS = [];
+
+  const LEVELS = [
+    {min:0,  max:5,  label:'萍水相逢 · 还不太了解我'},
+    {min:6,  max:10, label:'点头之交 · 知道一些'},
+    {min:11, max:15, label:'熟悉的朋友 · 挺了解的'},
+    {min:16, max:18, label:'好朋友 · 非常了解我'},
+    {min:19, max:20, label:'真正懂我的人 · 满分！'},
+  ];
+
+  let cur = 0, score = 0, nickname = '', answered = false;
+
+  document.getElementById('nick-input').addEventListener('input', function(){
+    document.getElementById('btn-start').disabled = this.value.trim().length === 0;
+    document.getElementById('nick-hint').textContent = '昵称将显示在排行榜上';
+    document.getElementById('nick-hint').style.color = 'var(--muted)';
+  });
+  document.getElementById('nick-input').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') startQuiz();
+  });
+
+  async function showLb() {
+    hideAll();
+    document.getElementById('lb-panel').classList.add('active');
+    window.scrollTo(0,0);
+    var lb = document.getElementById('lb-standalone');
+    lb.innerHTML = '<p class="loading-tip">加载中…</p>';
+    try {
+      var records = await fetchLeaderboard();
+      lb.innerHTML = '';
+      if(!records || records.length === 0){
+        lb.innerHTML = '<p class="lb-empty">还没有人参与过测验，快去试试吧！</p>'; return;
+      }
+      records.forEach(function(r, i){
+        var row = document.createElement('div');
+        row.className = 'lb-row';
+        var medal = i===0 ? '🥇' : i===1 ? '🥈' : i===2 ? '🥉' : (i+1)+'';
+        row.innerHTML = '<span class="lb-rank">' + medal + '</span>'
+          + '<span class="lb-name">' + r.nickname + '</span>'
+          + '<span class="lb-score">' + r.score + ' 分</span>'
+          + '<span class="lb-time">' + r.date + '</span>';
+        lb.appendChild(row);
+      });
+    } catch(e) {
+      lb.innerHTML = '<p class="lb-empty">加载失败，请稍后再试</p>';
+    }
+  }
+
+  function showDetail(id) {
+    hideAll();
+    var panel = document.getElementById('detail-' + id);
+    if(panel){ panel.classList.add('active'); window.scrollTo(0,0); }
+  }
+
+  function showQuiz() {
+    hideAll();
+    document.getElementById('quiz-panel').classList.add('active');
+    document.getElementById('qz-nick').style.display = 'block';
+    document.getElementById('qz-question').style.display = 'none';
+    document.getElementById('qz-result').style.display = 'none';
+    window.scrollTo(0,0);
+  }
+
+  function hideAll() {
+    document.getElementById('main-page').style.display = 'none';
+    document.querySelectorAll('.detail-panel').forEach(function(p){ p.classList.remove('active'); });
+    document.getElementById('quiz-panel').classList.remove('active');
+    document.querySelectorAll('.ask-panel').forEach(function(p){ p.classList.remove('active'); });
+    // Clear hash
+    if(window.location.hash.startsWith('#answer-')) {
+      history.replaceState(null, '', window.location.pathname);
+    }
+  }
+
+  function goBack() {
+    hideAll();
+    document.getElementById('main-page').style.display = 'block';
+    window.scrollTo(0,0);
+  }
+
+  async function startQuiz() {
+    var nick = document.getElementById('nick-input').value.trim();
+    if(!nick) return;
+    var btn = document.getElementById('btn-start');
+    btn.disabled = true;
+    btn.textContent = '检查中…';
+    var exists = await checkNickExists(nick);
+    if(exists) {
+      document.getElementById('nick-hint').textContent = '昵称「' + nick + '」已经被用过了，换一个试试！';
+      document.getElementById('nick-hint').style.color = 'var(--red)';
+      btn.disabled = false;
+      btn.textContent = '开始答题';
+      return;
+    }
+    nickname = nick;
+    cur = 0; score = 0;
+    QUESTIONS = sampleQuestions();
+    userAnswers = new Array(20).fill(-1);
+    btn.textContent = '开始答题';
+    document.getElementById('qz-nick').style.display = 'none';
+    document.getElementById('qz-question').style.display = 'block';
+    renderQ();
+  }
+
+  function renderQ() {
+    var q = QUESTIONS[cur];
+    document.getElementById('q-cat').textContent = q.cat;
+    document.getElementById('q-num').textContent = (cur+1) + ' / ' + QUESTIONS.length;
+    document.getElementById('prog').style.width = ((cur / QUESTIONS.length) * 100) + '%';
+    document.getElementById('q-text').textContent = q.q;
+    document.getElementById('q-fb').textContent = '';
+    document.getElementById('q-fb').style.color = '';
+    document.getElementById('q-next').style.display = 'none';
+    answered = false;
+    var opts = document.getElementById('opts');
+    opts.innerHTML = '';
+    q.opts.forEach(function(o, i){
+      var b = document.createElement('button');
+      b.className = 'opt'; b.textContent = o;
+      b.onclick = function(){ selectOpt(i); };
+      opts.appendChild(b);
+    });
+  }
+
+  var userAnswers = [];
+
+  function selectOpt(i) {
+    var btns = document.querySelectorAll('.opt');
+    // 清除所有选项的高亮
+    btns.forEach(function(b){
+      b.style.background = '';
+      b.style.borderColor = '';
+    });
+    // 高亮当前选中项
+    btns[i].style.background = '#EDD5C2';
+    btns[i].style.borderColor = 'var(--accent)';
+    // 记录/更新本题选择（覆盖，不push）
+    userAnswers[cur] = i;
+    answered = true;
+    var nxt = document.getElementById('q-next');
+    nxt.style.display = 'block';
+    nxt.textContent = cur < QUESTIONS.length - 1 ? '下一题 →' : '查看结果 →';
+  }
+
+  function nextQ() {
+    cur++;
+    if(cur >= QUESTIONS.length){ showResult(); return; }
+    renderQ();
+  }
+
+  function getLevel(s) {
+    for(var i=0; i<LEVELS.length; i++){ if(s>=LEVELS[i].min && s<=LEVELS[i].max) return LEVELS[i].label; }
+    return '';
+  }
+
+  async function showResult() {
+    // 计算得分
+    score = 0;
+    userAnswers.forEach(function(ans, idx){ if(ans === QUESTIONS[idx].ans) score++; });
+    document.getElementById('qz-question').style.display = 'none';
+    document.getElementById('qz-result').style.display = 'block';
+    document.getElementById('r-score').textContent = score;
+    document.getElementById('r-level').textContent = getLevel(score);
+    document.getElementById('r-nick').innerHTML = '<span>' + nickname + '</span>，你答对了 ' + score + ' 题！';
+    document.getElementById('prog').style.width = '100%';
+
+    document.getElementById('leaderboard').innerHTML = '<p class="loading-tip">正在保存记录…</p>';
+    window.scrollTo(0,0);
+    try { await saveRecord(nickname, score); } catch(e) { console.warn('保存失败', e); }
+    renderLeaderboard();
+  }
+
+  async function renderLeaderboard() {
+    var lb = document.getElementById('leaderboard');
+    lb.innerHTML = '<p class="loading-tip">加载排行榜中…</p>';
+    try {
+      var records = await fetchLeaderboard();
+      lb.innerHTML = '';
+      if(!records || records.length === 0){
+        lb.innerHTML = '<p class="lb-empty">暂无记录</p>'; return;
+      }
+      records.forEach(function(r, i){
+        var row = document.createElement('div');
+        row.className = 'lb-row';
+        var medal = i===0 ? '🥇' : i===1 ? '🥈' : i===2 ? '🥉' : (i+1)+'';
+        row.innerHTML = '<span class="lb-rank">' + medal + '</span>'
+          + '<span class="lb-name">' + r.nickname + '</span>'
+          + '<span class="lb-score">' + r.score + ' 分</span>'
+          + '<span class="lb-time">' + r.date + '</span>';
+        lb.appendChild(row);
+      });
+    } catch(e) {
+      lb.innerHTML = '<p class="lb-empty">排行榜加载失败，请稍后再试</p>';
+    }
+  }
+
+  const ADMIN_PASSWORD = 'colorful2026';
+
+  // Check URL hash on load
+  window.addEventListener('load', function() {
+    var hash = window.location.hash;
+    if(hash.startsWith('#answer-')) {
+      showAnswerPanel(hash.replace('#answer-',''));
+    } else if(hash === '#admin-ask') {
+      showAdminAsk();
+    }
+  });
+
+  function toggleAdmin() {
+    var panel = document.getElementById('admin-panel');
+    panel.classList.toggle('open');
+    if(panel.classList.contains('open')) {
+      document.getElementById('admin-login').style.display = 'block';
+      document.getElementById('admin-actions').style.display = 'none';
+      document.getElementById('admin-err').style.display = 'none';
+      document.getElementById('admin-pw').value = '';
+    }
+  }
+
+  function adminLogin() {
+    var pw = document.getElementById('admin-pw').value;
+    if(pw === ADMIN_PASSWORD) {
+      document.getElementById('admin-login').style.display = 'none';
+      document.getElementById('admin-actions').style.display = 'block';
+      document.getElementById('admin-err').style.display = 'none';
+    } else {
+      document.getElementById('admin-err').style.display = 'block';
+      document.getElementById('admin-pw').value = '';
+    }
+  }
+
+  async function clearAll() {
+    if(!confirm('确定清空所有排行榜记录？')) return;
+    try {
+      await deleteAll();
+      renderLeaderboard();
+      alert('已清空！');
+    } catch(e) {
+      alert('清空失败：' + e.message);
+    }
+  }
+
+  async function deleteOne() {
+    var nick = document.getElementById('del-nick').value.trim();
+    if(!nick) { alert('请输入要删除的昵称'); return; }
+    if(!confirm('确定删除「' + nick + '」的记录？')) return;
+    try {
+      await sbFetch(TABLE + '?nickname=eq.' + encodeURIComponent(nick), { method: 'DELETE' });
+      document.getElementById('del-nick').value = '';
+      renderLeaderboard();
+      alert('已删除「' + nick + '」的记录');
+    } catch(e) {
+      alert('删除失败：' + e.message);
+    }
+  }
+
+  // ══ ASK BOX JS ══
+
+  function generateToken() {
+    var arr = new Uint8Array(16);
+    crypto.getRandomValues(arr);
+    return Array.from(arr).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+  }
+
+  function updateChar() {
+    var val = document.getElementById('ask-q').value;
+    document.getElementById('ask-char-count').textContent = val.length;
+    document.getElementById('ask-submit-btn').disabled = val.trim().length === 0;
+  }
+
+  function showAsk() {
+    hideAll();
+    document.getElementById('ask-panel').classList.add('active');
+    // Reset form
+    document.getElementById('ask-q').value = '';
+    document.getElementById('ask-char-count').textContent = '0';
+    document.getElementById('ask-submit-btn').disabled = true;
+    document.getElementById('ask-form-area').style.display = 'block';
+    document.getElementById('ask-token-area').style.display = 'none';
+    // Check if URL has a token
+    var hash = window.location.hash;
+    if(hash.startsWith('#answer-')) {
+      showAnswerPanel(hash.replace('#answer-',''));
+      return;
+    }
+    window.scrollTo(0,0);
+  }
+
+  async function submitAsk() {
+    var q = document.getElementById('ask-q').value.trim();
+    if(!q) return;
+    var btn = document.getElementById('ask-submit-btn');
+    btn.disabled = true; btn.textContent = '提交中…';
+    var token = generateToken();
+    try {
+      await sbFetch('ask_questions', {
+        method: 'POST',
+        body: JSON.stringify({ question: q, token: token, answer: null, created_at: new Date().toISOString() })
+      });
+      document.getElementById('ask-form-area').style.display = 'none';
+      var baseUrl = window.location.href.split('#')[0];
+      var link = baseUrl + '#answer-' + token;
+      document.getElementById('ask-token-area').style.display = 'block';
+      document.getElementById('ask-token-area').innerHTML =
+        '<div class="token-box">' +
+        '<p class="token-title">✓ 提交成功！</p>' +
+        '<p class="token-desc">保存下面这个专属链接。我回答后，只有打开这个链接才能看到答案，请不要分享给别人。</p>' +
+        '<span class="token-link" id="my-token-link">' + link + '</span>' +
+        '<button class="token-copy" onclick="copyToken()">复制链接</button>' +
+        '</div>';
+    } catch(e) {
+      btn.disabled = false; btn.textContent = '匿名提交';
+      alert('提交失败，请重试');
+    }
+  }
+
+  function copyToken() {
+    var link = document.getElementById('my-token-link').textContent;
+    navigator.clipboard.writeText(link).then(function(){
+      var btn = document.querySelector('.token-copy');
+      btn.textContent = '已复制！';
+      setTimeout(function(){ btn.textContent = '复制链接'; }, 2000);
+    });
+  }
+
+  async function showAnswerPanel(token) {
+    hideAll();
+    document.getElementById('answer-panel').classList.add('active');
+    var el = document.getElementById('answer-content');
+    el.innerHTML = '<p class="loading-tip">加载中…</p>';
+    window.scrollTo(0,0);
+    try {
+      var data = await sbFetch('ask_questions?token=eq.' + token + '&select=question,answer');
+      if(!data || data.length === 0) {
+        el.innerHTML = '<p class="answer-pending">未找到该问题，链接可能有误。</p>'; return;
+      }
+      var row = data[0];
+      el.innerHTML = '<div class="answer-box">' +
+        '<p class="answer-q">你的问题：' + escHtml(row.question) + '</p>' +
+        (row.answer
+          ? '<p class="answer-a">' + escHtml(row.answer).replace(/\n/g,'<br>') + '</p>'
+          : '<p class="answer-pending">colorful 还没有回答，请稍后再来看～</p>') +
+        '</div>';
+    } catch(e) {
+      el.innerHTML = '<p class="answer-pending">加载失败，请重试</p>';
+    }
+  }
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function showAdminAsk() {
+    hideAll();
+    document.getElementById('admin-ask-panel').classList.add('active');
+    document.getElementById('admin-ask-login').style.display = 'block';
+    document.getElementById('admin-ask-list').style.display = 'none';
+    document.getElementById('admin-ask-pw').value = '';
+    document.getElementById('admin-ask-err').style.display = 'none';
+    window.scrollTo(0,0);
+  }
+
+  function adminAskLogin() {
+    var pw = document.getElementById('admin-ask-pw').value;
+    if(pw === ADMIN_PASSWORD) {
+      document.getElementById('admin-ask-login').style.display = 'none';
+      document.getElementById('admin-ask-list').style.display = 'block';
+      loadAdminQuestions();
+    } else {
+      document.getElementById('admin-ask-err').style.display = 'block';
+      document.getElementById('admin-ask-pw').value = '';
+    }
+  }
+
+  async function loadAdminQuestions() {
+    var el = document.getElementById('admin-q-cards');
+    el.innerHTML = '<p class="loading-tip">加载中…</p>';
+    try {
+      var data = await sbFetch('ask_questions?select=id,question,answer,created_at&order=created_at.desc');
+      el.innerHTML = '';
+      if(!data || data.length === 0) {
+        el.innerHTML = '<p class="lb-empty">还没有人提问</p>'; return;
+      }
+      data.forEach(function(row) {
+        var card = document.createElement('div');
+        card.className = 'admin-q-card';
+        var date = new Date(row.created_at).toLocaleDateString('zh-CN');
+        card.innerHTML =
+          '<p class="admin-q-meta">' + date + (row.answer ? ' · 已回答' : ' · 待回答') + '</p>' +
+          '<p class="admin-q-text">' + escHtml(row.question) + '</p>' +
+          (row.answer ? '<p class="admin-q-answered">我的回答：' + escHtml(row.answer) + '</p>' : '') +
+          '<textarea class="admin-ans-input" id="ans-' + row.id + '" placeholder="输入你的回答…">' +
+          (row.answer ? escHtml(row.answer) : '') + '</textarea>' +
+          '<div style="display:flex;gap:6px;">' +
+          '<button class="admin-ans-btn" onclick="submitAnswer(' + row.id + ')">保存回答</button>' +
+          '<button class="admin-del-btn" onclick="deleteQuestion(' + row.id + ')">删除</button>' +
+          '</div>';
+        el.appendChild(card);
+      });
+    } catch(e) {
+      el.innerHTML = '<p class="lb-empty">加载失败</p>';
+    }
+  }
+
+  async function submitAnswer(id) {
+    var ans = document.getElementById('ans-' + id).value.trim();
+    if(!ans) { alert('请输入回答内容'); return; }
+    try {
+      await sbFetch('ask_questions?id=eq.' + id, {
+        method: 'PATCH',
+        body: JSON.stringify({ answer: ans })
+      });
+      loadAdminQuestions();
+    } catch(e) { alert('保存失败：' + e.message); }
+  }
+
+  async function deleteQuestion(id) {
+    if(!confirm('确定删除这条问题？')) return;
+    try {
+      await sbFetch('ask_questions?id=eq.' + id, { method: 'DELETE' });
+      loadAdminQuestions();
+    } catch(e) { alert('删除失败：' + e.message); }
+  }
+
+  function retryQuiz() {
+    document.getElementById('qz-result').style.display = 'none';
+    document.getElementById('qz-nick').style.display = 'block';
+    document.getElementById('nick-input').value = '';
+    document.getElementById('btn-start').disabled = true;
+    document.getElementById('nick-hint').textContent = '昵称将显示在排行榜上';
+    document.getElementById('nick-hint').style.color = 'var(--muted)';
+    window.scrollTo(0,0);
+  }
+</script>
+</body>
+</html>
